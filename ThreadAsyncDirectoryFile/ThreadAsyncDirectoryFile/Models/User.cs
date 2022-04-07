@@ -2,15 +2,28 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ThreadAsyncDirectoryFile.Models
+namespace ThreadAsyncDirectoryFile
 {
     class User
     {
+        /*User class
+        - Id
+        - Statuses - status obyektlərini özündə saxlayan bir list olacaq.
+        - Username
+        - ShareStatus() - parametr olaraq bir status obyekti qəbul edib statuses listinə əlavə edəcək.
+        
+        - GetStatusById() - parametr olaraq nullable int tipindən bir id qəbul edəcək həmin id-li statusu tapıb geriyə qaytaracaq.
+        - GetAllStatuses() - geriyə user-in bütün statuslarını qaytaracaq.
+        - FilterStatusByDate() - parametr olaraq bir nullable id və DateTime tipindən bir tarix qəbul edəcək 
+        göndərilən id-li user-in həmin tarixdən sonra paylaşılan bütün statuslarını geriyə qaytaracaq, 
+        göndərilən tarixdən sonra heç bir status paylaşılmayıbsa NotFoundException baş verəcək.
+
+        ps: Username olmadan user obyekti yaratmaq olmaz.*/
         private static int _id;
         public int ID { get; }
         public string Username { get; set; }
            
-        List<Status> statuses =new List<Status>();
+        List<Status> statuses ;
 
         public User(string username)
         {
@@ -21,31 +34,42 @@ namespace ThreadAsyncDirectoryFile.Models
 
         }
         public void ShareStatus(Status stat)
-        {
+        {            
             statuses.Add(stat);
         }
         
         public void GetStatusById(int? id)
         {
-            bool exist = false;
-            foreach (Status item in statuses)
+            //bool exist = false;
+            //foreach (Status item in statuses)
+            //{
+            //    if (item.ID == id)
+            //    {
+            //        exist = true;
+            //        Console.WriteLine(item);
+            //    }
+            //}
+            //if (exist == false)
+            //    throw new NotFoundExpection($"The status not found with this {ID}");
+            Status stat1=statuses.Find(n => n.ID == id);
+            if (stat1 == null)
             {
-                if (item.ID == id)
-                {
-                    exist = true;
-                    Console.WriteLine(item);
-                }
+                throw new NotFoundExpection($"The status not found with this { ID }");
+
             }
-            if (exist == false)
-                Console.WriteLine($"The status not found with this {ID}");
+            Console.WriteLine(stat1);
         }
 
         public void GetAllStatuses()
 
         {
-            foreach (Status item in statuses)
+            foreach (var item in statuses)
             {
-                Console.WriteLine(item);                
+                Console.WriteLine($"ID: {item.ID} \n" +
+                $"Title: {item.Title} \n" +
+                $"Content: {item.Content} \n" +
+                $"Shared Date: {item.SharedDate}");
+                
             }
         }
 
@@ -60,10 +84,11 @@ namespace ThreadAsyncDirectoryFile.Models
                 }
             }
             else
-            {
-                Console.WriteLine($"The status not found with this {ID}");
+            {                
+                throw new NotFoundExpection($"The status not found with this {ID}");                
             }
                 
         }
+        
     }
 }
